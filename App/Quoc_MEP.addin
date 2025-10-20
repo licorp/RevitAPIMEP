@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>"Revit tool</Name>
+		<Assembly>C:\ProgramData\Autodesk\ApplicationPlugins\RevitMEP2024.bundle\Contents\RevitAPIMEP.dll</Assembly>
+		<AddInId>1C61895F-C1C6-4ABB-A94A-0D7CE4C0BD0C</AddInId>
+		<FullClassName>Quoc_MEP.Ribbon</FullClassName>
+		<VendorId>Create By Quoc.Nguyen</VendorId>
+		<VendorDescription>tapdoanli@gmail.com</VendorDescription>
+	</AddIn>
+</RevitAddIns>

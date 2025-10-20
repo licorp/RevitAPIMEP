@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>Revit MEP Tool</Name>
+		<Assembly>C:\ProgramData\Autodesk\ApplicationPlugins\RevitMEP2023.bundle\Contents\Quoc_MEP.dll</Assembly>
+		<AddInId>1C61895F-C1C6-4ABB-A94A-0D7CE4C0BD0C</AddInId>
+		<FullClassName>Quoc_MEP.Ribbon</FullClassName>
+		<VendorId>Create By Dat.Nguyen</VendorId>
+		<VendorDescription>ntdat024@gmail.com</VendorDescription>
+	</AddIn>
+</RevitAddIns>

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0"
+                    AutodeskProduct="Revit"
+                    ProductType="Application"
+                    Name="addin for Revit"
+                    AppVersion="1.0"
+                    ProductCode="{DD45D10C-9F4B-4DF3-A8C1-5E7F2895EE58}" >
+	<CompanyDetails Name="KhoahocRevitAPI" Url="https://myrevit.edubit.vn/" Email="ntdat024@gmail.com" />
+	<RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2017" SeriesMax="R2017" />
+
+	
+
+	<Components Description="2020">
+		<RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2020" SeriesMax="R2020" />
+		<ComponentEntry AppName="BIM tool for Revit 2020"
+						Version="1.0.0"
+						ModuleName="Contents\RevitAPIMEP2024.addin"
+						AppDescription="for Revit 2020" />
+	</Components>
+	
+	<Components Description="2021">
+		<RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2021" SeriesMax="R2021" />
+		<ComponentEntry AppName="BIM tool for Revit 2021"
+						Version="1.0.0"
+						ModuleName="Contents\RevitAPIMEP2024.addin"
+						AppDescription="for Revit 2021" />
+	</Components>
+	
+	<Components Description="2022">
+		<RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2022" SeriesMax="R2022" />
+		<ComponentEntry AppName="BIM tool for Revit 2022"
+						Version="1.0.0"
+						ModuleName="Contents\RevitAPIMEP2024.addin"
+						AppDescription="for Revit 2022" />
+	</Components>
+
+	<Components Description="2023">
+		<RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2023" SeriesMax="R2023" />
+		<ComponentEntry AppName="BIM tool for Revit 2023"
+						Version="1.0.0"
+						ModuleName="Contents\RevitAPIMEP2024.addin"
+						AppDescription="for Revit 2023" />
+	</Components>
+
+	<Components Description="2024">
+		<RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2024" SeriesMax="R2024" />
+		<ComponentEntry AppName="BIM tool for Revit 2024"
+						Version="1.0.0"
+						ModuleName="Contents\RevitAPIMEP2024.addin"
+						AppDescription="for Revit 2024" />
+	</Components>
+
+
+</ApplicationPackage>

@@ -1,0 +1,60 @@
+<Window x:Class="Quoc_MEP.UpDownTool.MEPUpDownView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Quoc_MEP.UpDownTool"
+             mc:Ignorable="d" 
+             Height="420"
+        Width="300" Title="MEP Up Down"
+        ShowInTaskbar="True"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TabControl
+            x:Name="tabControl"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            >
+            <TabItem Header="Duct" Width="70" Background="GreenYellow">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Pipe" Width="70" Background="GreenYellow">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="Cable Tray" Width="70" Background="GreenYellow">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment ="Top" Margin="0 30 0 0">
+            
+            <GroupBox Header="Setting" Width="280" Height="114" BorderBrush="Gray">
+                <StackPanel Margin="0 10 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Option:" Width="60"/>
+                        <ComboBox x:Name="cbbOption" Width="200" SelectionChanged="cbbOption_SelectionChanged"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                        <Label Content="Angle:" Width="60"/>
+                        <ComboBox x:Name="cbbAngle" Width="60" SelectionChanged="cbbAngle_SelectionChanged"/>
+                        <Label Content="Offset (mm):" Width="80"/>
+                        <TextBox x:Name="tbOffset" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Image" BorderBrush="Gray" Width="280" Height="185">
+                <Image x:Name="image" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+            </GroupBox>
+            
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5">
+            <Button x:Name="btOk" Width="80" Content="OK" Margin="0 0 5 0" Click="btOk_Click" />
+            <Button x:Name="btCancel" Width="80" Content="Cancel" Click="btCancel_Click"/>
+        </StackPanel>
+
+
+    </Grid>
+</Window>

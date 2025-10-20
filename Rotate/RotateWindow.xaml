@@ -1,0 +1,110 @@
+<Window x:Class="Quoc_MEP.RotateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Rotate Elements / Xoay d?i tu?ng" 
+        Width="450" Height="240" 
+        ResizeMode="NoResize" 
+        WindowStartupLocation="Manual"
+        Left="100"
+        Top="600"
+        SizeToContent="Height"
+        Background="#F5F5F5"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style x:Key="RunButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="#388E3C" 
+                                BorderThickness="1" 
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#45A049"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#388E3C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F44336"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="#D32F2F" 
+                                BorderThickness="1" 
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E53935"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#D32F2F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <StackPanel Margin="15,10,15,15">
+        <!-- Tieu de nhap goc xoay -->
+        <TextBlock Text="Enter rotation angle / Nhap goc xoay (degrees):" 
+                   HorizontalAlignment="Left" 
+                   Margin="0,0,0,5" 
+                   FontWeight="SemiBold"/>
+        
+        <!-- O nhap goc xoay -->
+        <TextBox Name="angleTextBox" 
+                 Height="30" 
+                 Margin="0,0,0,15"
+                 Text="90" 
+                 ToolTip="Ho tro phep tinh (+, -, *, /). Vi du: 90+45"
+                 VerticalContentAlignment="Center"
+                 HorizontalAlignment="Stretch"
+                 FontSize="14"/>
+        
+        <!-- Cac nut voi mau nen -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Name="btnRun" 
+                    Content="Run" 
+                    Grid.Column="0"
+                    Style="{StaticResource RunButtonStyle}"
+                    Height="32" 
+                    Margin="30,0,10,0"
+                    Click="BtnRun_Click"/>
+            
+            <Button Name="btnCancel" 
+                    Content="Cancel" 
+                    Grid.Column="1"
+                    Style="{StaticResource CancelButtonStyle}"
+                    Height="32" 
+                    Margin="10,0,30,0"
+                    Click="BtnCancel_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>

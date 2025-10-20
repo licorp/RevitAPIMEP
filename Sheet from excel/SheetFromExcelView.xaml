@@ -1,0 +1,35 @@
+<Window x:Class="Quoc_MEP.SheetFromExcelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Quoc_MEP"
+             ShowInTaskbar="True"
+            WindowStartupLocation="CenterScreen"
+            Height="200"  Width="600"
+            ResizeMode="NoResize"
+            Topmost="True"  
+            Title="Sheet From Excel"
+            Background="WhiteSmoke">
+    <Grid>
+
+        <GroupBox BorderBrush="Gray" Header="Setting" VerticalAlignment="Top" HorizontalAlignment="Center" Height="115" Margin="0 7 0 0" Width="580">
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Label Content="File Path:" Width="70" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tb_FilePath" Width="380" VerticalAlignment="Center" Height="26" VerticalContentAlignment="Center" />
+                    <Button x:Name="bt_Browse" Content="Browse..." Width="85" Margin="10 0 0 0" Background="White" Click="bt_Browse_Click"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0 10 0 0">
+                    <Label Content="Title Block:" Width="70" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <ComboBox  x:Name="cbb_TitleBlocks" Width="380" VerticalAlignment="Center" Height="26" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <StackPanel Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Height="25">
+            <Button x:Name="bt_Ok" Content="OK" Width="100" Click="bt_Ok_Click"/>
+            <Button x:Name="bt_Cancel" Content="Cancel"  Width="100" Margin="5 0 0 0" Click="bt_Cancel_Click"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

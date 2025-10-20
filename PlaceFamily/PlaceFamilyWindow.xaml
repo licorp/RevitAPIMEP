@@ -1,0 +1,54 @@
+<Window x:Class="Quoc_MEP.PlaceFamily.PlaceFamilyWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Quoc_MEP.PlaceFamily"
+             mc:Ignorable="d" 
+             Width="400"
+        Height="300"
+        Title="Place Family"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="True"
+        ResizeMode="NoResize">
+    <Grid>
+        <GroupBox Width="380" Height="211" Header="Setting" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" BorderBrush="Gray">
+            <StackPanel Margin="5 5 0 0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="File Cad:" Width="100"/>
+                    <TextBox x:Name="tbFileCad" Width="250" HorizontalAlignment="Center" VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                    <Label Content="CAD BLock:" Width="100"/>
+                    <ComboBox x:Name="cbbCadBlock" Width="250" VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                    <Label Content="Family:" Width="100"/>
+                    <ComboBox x:Name="cbbFamily" Width="250"  VerticalContentAlignment="Center" SelectionChanged="cbbFamily_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                    <Label Content="Type Name:" Width="100"/>
+                    <ComboBox x:Name="cbbTypeName" Width="250"  VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                    <Label Content="Level:" Width="100"/>
+                    <ComboBox x:Name="cbbLevel" Width="250"  VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                    <Label Content="Distance:" Width="100"/>
+                    <TextBox x:Name="tbDistance" Width="250" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+            
+        </GroupBox>
+
+
+        <StackPanel Orientation="Horizontal" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5">
+            <Button x:Name="btOk" Width="80" Content="OK" Margin="0 0 5 0" Click="btOk_Click"/>
+            <Button x:Name="btCancel" Width="80" Content="Cancel" Click="btCancel_Click"/>
+        </StackPanel>
+
+
+
+    </Grid>
+</Window>
