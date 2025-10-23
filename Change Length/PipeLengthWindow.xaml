@@ -1,0 +1,123 @@
+<Window x:Class="Quoc_MEP.PipeLengthWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Change Length / Thay đổi chiều dài" 
+        Width="470" Height="180" 
+        ResizeMode="NoResize" 
+        WindowStartupLocation="Manual"
+        Left="100"
+        Top="600"
+        Background="#F5F5F5"
+        Topmost="True"
+        ShowInTaskbar="False">
+    <Window.Resources>
+        <!-- Style cho nút Run (màu xanh lá) -->
+        <Style x:Key="RunButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="#388E3C" 
+                                BorderThickness="1" 
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#45A049"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#388E3C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Style cho nút Cancel (màu đỏ) -->
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F44336"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="#D32F2F" 
+                                BorderThickness="1" 
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E53935"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#D32F2F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="15,10,15,15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Tiêu đề song ngữ -->
+        <TextBlock Grid.Row="0" 
+                   Text="Enter new length / Nhập chiều dài mới (mm):" 
+                   HorizontalAlignment="Left" 
+                   Margin="0,0,0,8" 
+                   FontWeight="SemiBold"
+                   FontSize="13"/>
+        
+        <!-- Ô nhập chiều dài -->
+        <TextBox Name="lengthTextBox" 
+                 Grid.Row="1" 
+                 Height="32" 
+                 Margin="0,0,0,15"
+                 Text="1000" 
+                 VerticalContentAlignment="Center"
+                 HorizontalAlignment="Stretch"
+                 FontSize="14"
+                 Padding="5,0,5,0"/>
+        
+        <!-- Các nút Run và Cancel -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Name="btnOK" 
+                    Content="Run" 
+                    Grid.Column="0"
+                    Style="{StaticResource RunButtonStyle}"
+                    Height="36" 
+                    Margin="30,0,10,0"
+                    Click="BtnOK_Click"/>
+            
+            <Button Name="btnCancel" 
+                    Content="Cancel" 
+                    Grid.Column="1"
+                    Style="{StaticResource CancelButtonStyle}"
+                    Height="36" 
+                    Margin="10,0,30,0"
+                    Click="BtnCancel_Click"/>
+        </Grid>
+    </Grid>
+</Window>

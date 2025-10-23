@@ -89,7 +89,7 @@ namespace Quoc_MEP
 
             //Rotate
             PushButtonData Rotate = new PushButtonData("Rotate", "Rotate Element", path, nameSpace + "RotateElementsCommand");
-            MyPush(panel, Rotate, Properties.Resources.rotate, "Rotate Element with Angle");
+            MyPush(panel, Rotate, Properties.Resources.rotate_32, "Rotate Element with Angle");
 
 
         }
