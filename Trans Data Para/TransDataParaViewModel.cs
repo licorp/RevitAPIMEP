@@ -32,6 +32,7 @@ namespace Quoc_MEP
         private string _selectedTargetGroup;
         private string _selectedTargetParameter;
         private List<string> _selectedCategories;
+        private string _loadingStatus; // Hiển thị tiến độ loading
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -140,6 +141,12 @@ namespace Quoc_MEP
                 _lastSelectedCategories = new List<string>(_selectedCategories); // Lưu lại
                 OnPropertyChanged();
             }
+        }
+
+        public string LoadingStatus
+        {
+            get => _loadingStatus;
+            set { SetProperty(ref _loadingStatus, value); }
         }
 
         #endregion
@@ -311,28 +318,154 @@ namespace Quoc_MEP
                 // Xây dựng category filter nếu người dùng chọn categories
                 List<string> selectedCats = _selectedCategories ?? new List<string>();
 
-                // INSTANCES
-                var instances = new FilteredElementCollector(_doc)
-                    .WhereElementIsNotElementType()
-                    .ToElements();
+                // ⚡ TỐI ƯU: CHỈ LẤY SAMPLE - KHÔNG CẦN DUYỆT HẾT TẤT CẢ ELEMENTS!
+                // Lý do: Các parameter names giống nhau trên nhiều elements
+                // → Chỉ cần kiểm tra 1 số ít elements là đủ tìm được tất cả parameter names
+                const int MAX_SAMPLE_SIZE = 3000; // Tăng lên 3000 để tìm đủ parameters
+                const int NO_NEW_PARAMS_LIMIT = 500; // Nếu 500 elements liên tiếp không có param mới → Dừng
+                int processedCount = 0;
+                int noNewParamsCount = 0; // Đếm số elements liên tiếp không tìm thấy param mới
+                int lastParamCount = 0;
+
+                // INSTANCES - Lấy SAMPLE
+                var instanceCollector = new FilteredElementCollector(_doc)
+                    .WhereElementIsNotElementType();
 
                 if (selectedCats.Count > 0)
                 {
-                    // CHỈ LẤY elements có category được chọn
-                    instances = instances.Where(e => 
-                        e.Category != null && selectedCats.Contains(e.Category.Name)
-                    ).ToList();
-                }
+                    // CÓ CATEGORY ĐƯỢC CHỌN - Áp dụng filter
+                    var catIds = new List<ElementId>();
+                    foreach (string catName in selectedCats)
+                    {
+                        try
+                        {
+                            Category cat = _doc.Settings.Categories.get_Item(catName);
+                            if (cat != null && cat.Id != null && cat.Id != ElementId.InvalidElementId)
+                            {
+                                catIds.Add(cat.Id);
+                            }
+                        }
+                        catch { }
+                    }
 
-                foreach (Element elem in instances)
+                    if (catIds.Count > 0)
+                    {
+                        instanceCollector = instanceCollector.WherePasses(
+                            new ElementMulticategoryFilter(catIds));
+                    }
+                }
+                // KHÔNG CÓ CATEGORY (ALL) - KHÔNG áp dụng filter, lấy TẤT CẢ instances
+
+                LoadingStatus = "Loading instances...";
+
+                foreach (Element elem in instanceCollector)
                 {
+                    if (processedCount >= MAX_SAMPLE_SIZE) break; // Đạt giới hạn tối đa
+
+                    // DỪNG SỚM: Nếu 500 elements liên tiếp không tìm thấy param mới → Đã tìm đủ!
+                    if (noNewParamsCount >= NO_NEW_PARAMS_LIMIT) break;
+
+                    // Cập nhật tiến độ mỗi 50 elements
+                    if (processedCount % 50 == 0)
+                    {
+                        LoadingStatus = $"Loading... ({processedCount}/{MAX_SAMPLE_SIZE} elements, {paramNames.Count} params)";
+                    }
+
+                    bool foundNewParam = false;
+
                     foreach (Parameter param in elem.Parameters)
                     {
                         try
                         {
                             if (param != null && param.Definition != null)
                             {
-                                // Kiểm tra ParameterGroup
+                                BuiltInParameterGroup paramGroup = param.Definition.ParameterGroup;
+                                if (paramGroup == targetGroup)
+                                {
+                                    string paramName = param.Definition.Name;
+                                    if (!string.IsNullOrEmpty(paramName))
+                                    {
+                                        int beforeAdd = paramNames.Count;
+                                        paramNames.Add(paramName);
+                                        if (paramNames.Count > beforeAdd)
+                                        {
+                                            foundNewParam = true; // Tìm thấy param mới!
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+
+                    processedCount++;
+                    
+                    // Cập nhật counter dừng sớm
+                    if (paramNames.Count > lastParamCount)
+                    {
+                        noNewParamsCount = 0; // Reset - vừa tìm thấy param mới
+                        lastParamCount = paramNames.Count;
+                    }
+                    else
+                    {
+                        noNewParamsCount++; // Tăng counter - không có param mới
+                    }
+                }
+
+                // TYPES - Lấy SAMPLE
+                var typeCollector = new FilteredElementCollector(_doc)
+                    .WhereElementIsElementType();
+
+                if (selectedCats.Count > 0)
+                {
+                    // CÓ CATEGORY ĐƯỢC CHỌN - Áp dụng filter
+                    var catIds = new List<ElementId>();
+                    foreach (string catName in selectedCats)
+                    {
+                        try
+                        {
+                            Category cat = _doc.Settings.Categories.get_Item(catName);
+                            if (cat != null && cat.Id != null && cat.Id != ElementId.InvalidElementId)
+                            {
+                                catIds.Add(cat.Id);
+                            }
+                        }
+                        catch { }
+                    }
+
+                    if (catIds.Count > 0)
+                    {
+                        typeCollector = typeCollector.WherePasses(
+                            new ElementMulticategoryFilter(catIds));
+                    }
+                }
+                // KHÔNG CÓ CATEGORY (ALL) - KHÔNG áp dụng filter, lấy TẤT CẢ types
+
+                LoadingStatus = "Loading types...";
+                
+                processedCount = 0; // Reset counter
+                noNewParamsCount = 0; // Reset counter dừng sớm
+                lastParamCount = paramNames.Count;
+                
+                foreach (Element elem in typeCollector)
+                {
+                    if (processedCount >= MAX_SAMPLE_SIZE) break; // Đạt giới hạn tối đa
+
+                    // DỪNG SỚM: Nếu 500 elements liên tiếp không tìm thấy param mới → Đã tìm đủ!
+                    if (noNewParamsCount >= NO_NEW_PARAMS_LIMIT) break;
+
+                    // Cập nhật tiến độ mỗi 50 elements
+                    if (processedCount % 50 == 0)
+                    {
+                        LoadingStatus = $"Loading types... ({processedCount}/{MAX_SAMPLE_SIZE} elements, {paramNames.Count} params)";
+                    }
+
+                    foreach (Parameter param in elem.Parameters)
+                    {
+                        try
+                        {
+                            if (param != null && param.Definition != null)
+                            {
                                 BuiltInParameterGroup paramGroup = param.Definition.ParameterGroup;
                                 if (paramGroup == targetGroup)
                                 {
@@ -346,47 +479,25 @@ namespace Quoc_MEP
                         }
                         catch { }
                     }
-                }
-
-                // TYPES
-                var types = new FilteredElementCollector(_doc)
-                    .WhereElementIsElementType()
-                    .ToElements();
-
-                if (selectedCats.Count > 0)
-                {
-                    // CHỈ LẤY types có category được chọn
-                    types = types.Where(e => 
-                        e.Category != null && selectedCats.Contains(e.Category.Name)
-                    ).ToList();
-                }
-
-                foreach (Element elem in types)
-                {
-                    foreach (Parameter param in elem.Parameters)
+                    
+                    processedCount++;
+                    
+                    // Cập nhật counter dừng sớm
+                    if (paramNames.Count > lastParamCount)
                     {
-                        try
-                        {
-                            if (param != null && param.Definition != null)
-                            {
-                                // Kiểm tra ParameterGroup
-                                BuiltInParameterGroup paramGroup = param.Definition.ParameterGroup;
-                                if (paramGroup == targetGroup)
-                                {
-                                    string paramName = param.Definition.Name;
-                                    if (!string.IsNullOrEmpty(paramName))
-                                    {
-                                        paramNames.Add(paramName);
-                                    }
-                                }
-                            }
-                        }
-                        catch { }
+                        noNewParamsCount = 0; // Reset - vừa tìm thấy param mới
+                        lastParamCount = paramNames.Count;
+                    }
+                    else
+                    {
+                        noNewParamsCount++; // Tăng counter - không có param mới
                     }
                 }
 
                 // Lưu vào cache
                 _parametersCache[targetGroup] = paramNames;
+
+                LoadingStatus = $"Completed! Found {paramNames.Count} parameters";
 
                 var finalSorted = paramNames.OrderBy(x => x).ToList();
 

@@ -97,9 +97,7 @@ namespace Quoc_MEP
                                 if (_window.IsParameterEmpty(sourceParam))
                                 {
                                     skippedCount++;
-                                    Logger.Info($"  ⊘ ID {elem.Id.IntegerValue}: Skipped - Source parameter is EMPTY");
-                                    Logger.Info($"      [{_request.SourceGroupName}].{_request.SourceParameterName} has no value");
-                                    continue;
+                                    return; // return trong lambda = continue trong foreach
                                 }
                                 
                                 string sourceValue = _window.GetParameterValueString(sourceParam);
@@ -115,48 +113,22 @@ namespace Quoc_MEP
                                         bool copySuccess = _window.CopyParameterValue(sourceParam, targetParam);
                                         if (copySuccess)
                                         {
-                                            string targetValueAfter = _window.GetParameterValueString(targetParam);
                                             successCount++;
-                                            Logger.Info($"  ✓ ID {elem.Id.IntegerValue}:");
-                                            Logger.Info($"      [{_request.SourceGroupName}] {_request.SourceParameterName} = {sourceValue}");
-                                            Logger.Info($"      → [{_request.TargetGroupName}] {_request.TargetParameterName}");
-                                            Logger.Info($"      Before: {targetValueBefore} → After: {targetValueAfter}");
-                                            Logger.Info($"      IsInstance: {isInstanceParam}");
                                         }
                                     }
                                     else
                                     {
                                         skippedCount++;
-                                        Logger.Warning($"  ✗ ID {elem.Id.IntegerValue}: Skipped - StorageType mismatch");
-                                        Logger.Warning($"      Source:[{_request.SourceGroupName}].{_request.SourceParameterName} = {sourceParam.StorageType}");
-                                        Logger.Warning($"      Target:[{_request.TargetGroupName}].{_request.TargetParameterName} = {targetParam.StorageType}");
                                     }
                                 }
                                 else
                                 {
                                     skippedCount++;
-                                    Logger.Info($"  ⊘ ID {elem.Id.IntegerValue}: Skipped (already has value)");
-                                    Logger.Info($"      [{_request.TargetGroupName}].{_request.TargetParameterName} = {targetValueBefore}");
                                 }
                             }
                             else
                             {
                                 skippedCount++;
-                                if (sourceParam == null)
-                                {
-                                    Logger.Warning($"  ✗ ID {elem.Id.IntegerValue}: Source parameter NOT FOUND");
-                                    Logger.Warning($"      Looking for: [{_request.SourceGroupName}].{_request.SourceParameterName}");
-                                }
-                                else if (targetParam == null)
-                                {
-                                    Logger.Warning($"  ✗ ID {elem.Id.IntegerValue}: Target parameter NOT FOUND");
-                                    Logger.Warning($"      Looking for: [{_request.TargetGroupName}].{_request.TargetParameterName}");
-                                }
-                                else if (targetParam.IsReadOnly)
-                                {
-                                    Logger.Warning($"  ✗ ID {elem.Id.IntegerValue}: Target parameter is READ-ONLY");
-                                    Logger.Warning($"      [{_request.TargetGroupName}].{_request.TargetParameterName}");
-                                }
                             }
                         }
                         catch (Exception ex)

@@ -32,6 +32,72 @@ namespace Quoc_MEP
                 UIApplication uiApp = commandData.Application;
                 Trace.WriteLine("=== RotateElementsCommand Started ===");
 
+                // ===== CHECK: Nếu gọi từ Panel =====
+                if (PanelDataBridge.IsCalledFromPanel && PanelDataBridge.RotateAngleValue.HasValue)
+                {
+                    Trace.WriteLine($"Called from Panel with angle: {PanelDataBridge.RotateAngleValue.Value}°");
+                    
+                    // Thực thi trực tiếp KHÔNG hiển thị form
+                    double angleDegrees = PanelDataBridge.RotateAngleValue.Value;
+                    UIDocument uidoc = uiApp.ActiveUIDocument;
+                    Document doc = uidoc.Document;
+                    var selectedIds = uidoc.Selection.GetElementIds();
+                    
+                    if (selectedIds.Count == 0)
+                    {
+                        TaskDialog.Show("Warning", "Please select elements to rotate!");
+                        PanelDataBridge.Reset();
+                        return Result.Cancelled;
+                    }
+                    
+                    // Thực thi rotate
+                    double angleRadians = angleDegrees * Math.PI / 180.0;
+                    int successCount = 0;
+                    int skipCount = 0;
+                    
+                    using (Transaction trans = new Transaction(doc, "Rotate from Panel"))
+                    {
+                        trans.Start();
+                        
+                        foreach (ElementId id in selectedIds)
+                        {
+                            Element elem = doc.GetElement(id);
+                            Location location = elem?.Location;
+                            
+                            if (location is LocationPoint locPoint)
+                            {
+                                XYZ point = locPoint.Point;
+                                Line axis = Line.CreateBound(point, point + XYZ.BasisZ);
+                                locPoint.Rotate(axis, angleRadians);
+                                successCount++;
+                            }
+                            else if (location is LocationCurve locCurve)
+                            {
+                                Curve curve = locCurve.Curve;
+                                XYZ midPoint = (curve.GetEndPoint(0) + curve.GetEndPoint(1)) / 2.0;
+                                Line axis = Line.CreateBound(midPoint, midPoint + XYZ.BasisZ);
+                                locCurve.Rotate(axis, angleRadians);
+                                successCount++;
+                            }
+                            else skipCount++;
+                        }
+                        
+                        trans.Commit();
+                    }
+                    
+                    Trace.WriteLine($"Panel execution: {successCount} success, {skipCount} skipped");
+                    
+                    string msg = $"Rotated {successCount} element(s) by {angleDegrees}°";
+                    if (skipCount > 0) msg += $"\n{skipCount} skipped.";
+                    TaskDialog.Show("Success", msg);
+                    
+                    // Reset Bridge
+                    PanelDataBridge.Reset();
+                    
+                    return Result.Succeeded;
+                }
+
+                // ===== Gọi từ Ribbon: Hiển thị Form =====
                 // Initialize external event on first run
                 if (_rotationEvent == null)
                 {
@@ -49,6 +115,7 @@ namespace Quoc_MEP
             {
                 Trace.WriteLine($"Error in RotateElementsCommand: {ex.Message}");
                 message = ex.Message;
+                PanelDataBridge.Reset(); // Đảm bảo reset khi có lỗi
                 return Result.Failed;
             }
         }

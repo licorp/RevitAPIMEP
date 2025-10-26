@@ -43,6 +43,10 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="AdWindows">
+      <HintPath>C:\Program Files\Autodesk\Revit 2023\AdWindows.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="RevitAPI">
       <HintPath>C:\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -65,6 +69,20 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="Wpf.Ui, Version=4.0.0.0, Culture=neutral, PublicKeyToken=11f9f5cc97b3ffd6, processorArchitecture=MSIL">
+      <HintPath>packages\WPF-UI.4.0.3\lib\net472\Wpf.Ui.dll</HintPath>
+    </Reference>
+    <Reference Include="Wpf.Ui.Abstractions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=11f9f5cc97b3ffd6, processorArchitecture=MSIL">
+      <HintPath>packages\WPF-UI.Abstractions.4.0.3\lib\net472\Wpf.Ui.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="ricaun.Revit.UI.0.8.0">
+      <HintPath>packages\ricaun.Revit.UI.0.8.0\lib\net48\ricaun.Revit.UI.0.8.0.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ricaun.Revit.UI.StatusBar.1.0.0">
+      <HintPath>packages\ricaun.Revit.UI.StatusBar.1.0.0\lib\net47\ricaun.Revit.UI.StatusBar.1.0.0.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\Class1.cs" />
@@ -78,6 +96,13 @@
     <Compile Include="Connect\MoveConnectCommand.cs" />
     <Compile Include="Connect\SelectionHelper.cs" />
     <Compile Include="Con_Align\Con_Align.cs" />
+    <Compile Include="DockablePanel\DockablePaneCreatorService.cs" />
+    <Compile Include="DockablePanel\PanelDataBridge.cs" />
+    <Compile Include="DockablePanel\MEPToolsPanel.xaml.cs">
+      <DependentUpon>MEPToolsPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DockablePanel\MEPToolsPanelLogger.cs" />
+    <Compile Include="DockablePanel\ShowDockablePanelCommand.cs" />
     <Compile Include="DrawPipe\DrawPipe.cs" />
     <Compile Include="Lib\MEPLib.cs" />
     <Compile Include="Place Support\PlaceSupportCmd.cs" />
@@ -112,6 +137,7 @@
     <Compile Include="Split Duct\SplitDuctWindow.xaml.cs">
       <DependentUpon>SplitDuctWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StatusBar Demo\StatusBarDemoCmd.cs" />
     <Compile Include="Trans Data Para\Trans Data Para.cs" />
     <Compile Include="Trans Data Para\TransDataParaEventHandler.cs" />
     <Compile Include="Trans Data Para\TransDataParaViewModel.cs" />
@@ -130,6 +156,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Change Length\PipeLengthWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DockablePanel\MEPToolsPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

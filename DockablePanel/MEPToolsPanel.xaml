@@ -1,0 +1,120 @@
+﻿<Page x:Class="Quoc_MEP.MEPToolsPanel"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="MEP Tools Panel"
+      Height="350" Width="380"
+      Background="White">
+    <StackPanel>
+        <!-- Header với Gradient và Shadow -->
+        <Border>
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FF2C3E50" Offset="0"/>
+                    <GradientStop Color="#FF34495E" Offset="0.5"/>
+                    <GradientStop Color="#FF2C3E50" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect Color="#40000000" BlurRadius="8" ShadowDepth="2" Opacity="0.5"/>
+            </Border.Effect>
+            <Grid Margin="15,14,15,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Icon -->
+                <Border Grid.Column="0" 
+                        Background="#22FFFFFF" 
+                        CornerRadius="6" 
+                        Width="36" 
+                        Height="36" 
+                        Margin="0,0,12,0">
+                    <TextBlock Text="⚙" 
+                               FontSize="20" 
+                               Foreground="White" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Border>
+                
+                <!-- Title và Subtitle -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="MEP Tools Panel" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Foreground="White"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <TextBlock Text="Licorp" 
+                                   FontSize="8" 
+                                   Foreground="#99FFFFFF" 
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text=" • " 
+                                   FontSize="8" 
+                                   Foreground="#66FFFFFF" 
+                                   Margin="2,0"/>
+                        <TextBlock Text="Quoc.Nguyen" 
+                                   FontSize="8" 
+                                   Foreground="#99FFFFFF"/>
+                        <TextBlock Text=" • " 
+                                   FontSize="8" 
+                                   Foreground="#66FFFFFF" 
+                                   Margin="2,0"/>
+                        <TextBlock Text="Ver 1.0" 
+                                   FontSize="8" 
+                                   Foreground="#99FFFFFF" 
+                                   FontStyle="Italic"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Height="300">
+            <StackPanel Margin="12,10,12,8">
+                <StackPanel Margin="0,0,0,12">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Change Length" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="New Length (mm):" FontSize="10" Foreground="#FF666666" Margin="0,0,0,5"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="3" Background="White">
+                            <TextBox x:Name="txtChangeLengthValue" Height="32" Text="1000" FontSize="13" VerticalContentAlignment="Center" Padding="8,0" BorderThickness="0" Background="Transparent"/>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="3" Background="#FFFF9800" Margin="6,0,0,0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#40000000" BlurRadius="3" ShadowDepth="1" Opacity="0.3"/>
+                            </Border.Effect>
+                            <Button x:Name="btnRunChangeLength" Content="RUN" Height="32" Width="75" Click="BtnRunChangeLength_Click" Background="Transparent" Foreground="White" BorderThickness="0" FontWeight="Bold" FontSize="11" Cursor="Hand"/>
+                        </Border>
+                    </Grid>
+                    <TextBlock x:Name="txtChangeLengthStatus" Text="" Margin="0,5,0,0" Foreground="Green" FontStyle="Italic" FontSize="9" TextWrapping="Wrap"/>
+                </StackPanel>
+                <Border BorderBrush="#FFE8E8E8" BorderThickness="0,1,0,0" Margin="0,0,0,12"/>
+                <StackPanel Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Rotate Element" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="Rotation Angle (degrees):" FontSize="10" Foreground="#FF666666" Margin="0,0,0,5"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="3" Background="White">
+                            <TextBox x:Name="txtRotateAngleValue" Height="32" Text="90" FontSize="13" VerticalContentAlignment="Center" Padding="8,0" BorderThickness="0" Background="Transparent"/>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="3" Background="#FF2196F3" Margin="6,0,0,0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#40000000" BlurRadius="3" ShadowDepth="1" Opacity="0.3"/>
+                            </Border.Effect>
+                            <Button x:Name="btnRunRotate" Content="RUN" Height="32" Width="75" Click="BtnRunRotate_Click" Background="Transparent" Foreground="White" BorderThickness="0" FontWeight="Bold" FontSize="11" Cursor="Hand"/>
+                        </Border>
+                    </Grid>
+                    <TextBlock x:Name="txtRotateStatus" Text="" Margin="0,5,0,0" Foreground="Green" FontStyle="Italic" FontSize="9" TextWrapping="Wrap"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </StackPanel>
+</Page>

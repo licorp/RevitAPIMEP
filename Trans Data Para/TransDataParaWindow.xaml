@@ -1,13 +1,17 @@
 <Window x:Class="Quoc_MEP.TransDataParaWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         Title="Copy Dữ Liệu Giữa Parameters" 
-        Height="1000" Width="600"
+        Height="950" Width="700"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F5F5"
-        ResizeMode="NoResize"
-        Loaded="Window_Loaded">
+        ResizeMode="CanResize"
+        MinWidth="600"
+        MinHeight="700"
+        Loaded="Window_Loaded"
+        Background="#F5F5F5">
     <Window.Resources>
+        <!-- Run Button Style (Green) -->
         <Style x:Key="RunButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#4CAF50"/>
             <Setter Property="Foreground" Value="White"/>
@@ -34,7 +38,8 @@
             </Setter>
         </Style>
         
-        <Style x:Key="CancelButtonStyle" TargetType="Button">
+        <!-- Close Button Style (Red) -->
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#F44336"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -60,193 +65,232 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <StackPanel Margin="20">
-            <!-- Category Filter -->
-            <GroupBox Header="" Foreground="#333333" Margin="0,0,0,15">
-                <StackPanel Margin="10">
-                    <!-- Search TextBox -->
-                    <TextBlock Text="Filter list:" Foreground="#333333" FontSize="12" Margin="0,0,0,5"/>
-                    <TextBox x:Name="CategorySearchBox" 
-                             Height="28" 
-                             Padding="5"
-                             Background="White"
-                             BorderThickness="1"
-                             BorderBrush="#CCCCCC"
-                             FontSize="12"
-                             Foreground="#333333"
-                             TextChanged="CategorySearchBox_TextChanged"/>
-                    
-                    <!-- Hide Unselected Checkbox -->
-                    <CheckBox x:Name="HideUnselectedCategoriesCheckBox"
-                              Content="Hide un-checked categories"
-                              Foreground="#333333"
-                              FontSize="11"
-                              Margin="0,8,0,8"
-                              Checked="HideUnselectedCategoriesCheckBox_Changed"
-                              Unchecked="HideUnselectedCategoriesCheckBox_Changed"/>
-                    
-                    <!-- Select Categories ListBox -->
-                    <ListBox x:Name="CategoryListBox" 
-                             Height="200" 
-                             Background="White"
-                             BorderThickness="1"
-                             BorderBrush="#999999"
-                             SelectionMode="Multiple"
-                             FontSize="11"
-                             Padding="5"
-                             SelectionChanged="CategoryListBox_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <CheckBox Content="{Binding}" 
-                                          IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}"
-                                          Foreground="#333333"
-                                          FontSize="11"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    
-                    <!-- Check All / Check None Buttons -->
-                    <Grid Margin="0,8,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Header -->
+                <ui:Card Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="📋 Copy Parameter Data Between Groups" 
+                                   FontSize="20" 
+                                   FontWeight="Bold" 
+                                   Foreground="#1976D2"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock Text="Sao chép giá trị parameter từ Group nguồn sang Group đích" 
+                                   FontSize="12" 
+                                   Foreground="#666666"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Category Filter -->
+                <ui:Card Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="🔍 Select Categories" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Foreground="#333333"
+                                   Margin="0,0,0,10"/>
                         
-                        <Button x:Name="CheckAllButton" 
-                                Content="Check All" 
-                                Grid.Column="0"
-                                Height="28"
-                                Margin="0,0,5,0"
-                                FontSize="11"
-                                Click="CheckAllButton_Click"
-                                Background="White"
-                                BorderBrush="#999999"
-                                Cursor="Hand"/>
-                                
-                        <Button x:Name="CheckNoneButton" 
-                                Content="Check None" 
-                                Grid.Column="1"
-                                Height="28"
-                                Margin="5,0,0,0"
-                                FontSize="11"
-                                Click="CheckNoneButton_Click"
-                                Background="White"
-                                BorderBrush="#999999"
-                                Cursor="Hand"/>
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-
-            <!-- Group được Copy (Nguồn) -->
-            <GroupBox Header="Group được copy" Foreground="#333333" Margin="0,0,0,15">
-                <StackPanel Margin="10">
-                    <!-- Group Name ComboBox (editable + dropdown) -->
-                    <TextBlock Text="Group name" Foreground="#333333" FontSize="12" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="SourceGroupCombo" 
-                              IsEditable="True" 
-                              IsTextSearchEnabled="True"
-                              StaysOpenOnEdit="True"
-                              Height="32" 
-                              Margin="0,0,0,10"
-                              Background="White"
-                              FontSize="12"
-                              SelectionChanged="SourceGroupCombo_SelectionChanged"
-                              DropDownOpened="SourceGroupCombo_DropDownOpened">
-                    </ComboBox>
-
-                    <!-- Parameter Name ComboBox (editable + dropdown) -->
-                    <TextBlock Text="Parameter name" Foreground="#333333" FontSize="12" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="SourceParameterCombo" 
-                              IsEditable="True" 
-                              IsTextSearchEnabled="True"
-                              StaysOpenOnEdit="True"
-                              Height="32"
-                              Background="White"
-                              FontSize="12"
-                              SelectionChanged="SourceParameterCombo_SelectionChanged"
-                              DropDownOpened="SourceParameterCombo_DropDownOpened">
-                    </ComboBox>
-                </StackPanel>
-            </GroupBox>
-
-            <!-- Group bị copy (Đích) -->
-            <GroupBox Header="Group bị copy" Foreground="#333333" Margin="0,0,0,15">
-                <StackPanel Margin="10">
-                    <!-- Group Name ComboBox (editable + dropdown) -->
-                    <TextBlock Text="Group Name" Foreground="#333333" FontSize="12" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="TargetGroupCombo" 
-                              IsEditable="True" 
-                              IsTextSearchEnabled="True"
-                              StaysOpenOnEdit="True"
-                              Height="32" 
-                              Margin="0,0,0,10"
-                              Background="White"
-                              FontSize="12"
-                              SelectionChanged="TargetGroupCombo_SelectionChanged"
-                              DropDownOpened="TargetGroupCombo_DropDownOpened">
-                    </ComboBox>
-
-                    <!-- Parameter Name ComboBox (editable + dropdown) -->
-                    <TextBlock Text="Parameter Name" Foreground="#333333" FontSize="12" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="TargetParameterCombo" 
-                              IsEditable="True" 
-                              IsTextSearchEnabled="True"
-                              StaysOpenOnEdit="True"
-                              Height="32"
-                              Background="White"
-                              FontSize="12"
-                              SelectionChanged="TargetParameterCombo_SelectionChanged"
-                              DropDownOpened="TargetParameterCombo_DropDownOpened">
-                    </ComboBox>
-                </StackPanel>
-            </GroupBox>
-
-            <!-- Copy Options -->
-            <GroupBox Header="Copy Options" Foreground="#333333" Margin="0,0,0,15" Height="62">
-                <StackPanel Margin="10">
-                    <CheckBox x:Name="OverwriteExistingCheckBox"
-                              Content="Overwrite existing values (ghi đè giá trị đã có)"
-                              Foreground="#333333"
-                              FontSize="12"
-                              IsChecked="False"
-                              ToolTip="Unchecked: Only copy to empty/null parameters (pyRevit style)&#x0a;Checked: Overwrite all parameters including existing values"/>
-                    
-                    <TextBlock 
-                               Foreground="#666666" 
-                               FontSize="10" 
-                               Margin="20,5,0,0"
-                               TextWrapping="Wrap"/>
-                </StackPanel>
-            </GroupBox>
-
-            <!-- Buttons -->
-            <Grid Margin="0,20,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                
-                <Button x:Name="RunButton" 
-                        Content="Run" 
-                        Grid.Column="0"
-                        Style="{StaticResource RunButtonStyle}"
-                        Height="40"
-                        Margin="50,0,10,0"
-                        FontSize="14"
-                        Click="RunButton_Click"
-                        Cursor="Hand"/>
+                        <!-- Search TextBox -->
+                        <ui:TextBox x:Name="CategorySearchBox" 
+                                    PlaceholderText="Filter categories..."
+                                    Icon="{ui:SymbolIcon Search24}"
+                                    TextChanged="CategorySearchBox_TextChanged"
+                                    Margin="0,0,0,10"/>
                         
-                <Button x:Name="CloseButton" 
-                        Content="Close" 
-                        Grid.Column="1"
-                        Style="{StaticResource CancelButtonStyle}"
-                        Height="40"
-                        Margin="10,0,50,0"
-                        FontSize="14"
-                        Click="CloseButton_Click"
-                        Cursor="Hand"/>
-            </Grid>
-        </StackPanel>
+                        <!-- Select Categories ListBox -->
+                        <Border BorderBrush="#CCCCCC" 
+                                BorderThickness="1" 
+                                CornerRadius="4"
+                                Margin="0,0,0,10"
+                                Background="White">
+                            <ListBox x:Name="CategoryListBox" 
+                                     Height="200" 
+                                     SelectionMode="Multiple"
+                                     FontSize="12"
+                                     SelectionChanged="CategoryListBox_SelectionChanged"
+                                     Background="White"
+                                     Foreground="#333333">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding}" 
+                                                  IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}"
+                                                  FontSize="12"
+                                                  Foreground="#333333"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+                        
+                        <!-- Hide Unselected Checkbox - MOVED HERE -->
+                        <CheckBox x:Name="HideUnselectedCategoriesCheckBox"
+                                  Content="Hide un-checked categories"
+                                  FontSize="12"
+                                  Foreground="#333333"
+                                  Margin="0,0,0,10"
+                                  Checked="HideUnselectedCategoriesCheckBox_Changed"
+                                  Unchecked="HideUnselectedCategoriesCheckBox_Changed"/>
+                        
+                        <!-- Check All / Check None Buttons -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <ui:Button x:Name="CheckAllButton" 
+                                       Content="Check All" 
+                                       Grid.Column="0"
+                                       Icon="{ui:SymbolIcon CheckboxChecked24}"
+                                       Appearance="Secondary"
+                                       Click="CheckAllButton_Click"/>
+                                    
+                            <ui:Button x:Name="CheckNoneButton" 
+                                       Content="Check None" 
+                                       Grid.Column="2"
+                                       Icon="{ui:SymbolIcon CheckboxUnchecked24}"
+                                       Appearance="Secondary"
+                                       Click="CheckNoneButton_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Source Group -->
+                <ui:Card Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="📤 Group Nguồn (Source)" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Foreground="#2E7D32"
+                                   Margin="0,0,0,10"/>
+                        
+                        <!-- Group Name ComboBox -->
+                        <TextBlock Text="Group Name:" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="SourceGroupCombo" 
+                                  IsEditable="True"
+                                  Margin="0,0,0,10"
+                                  Height="36"
+                                  Background="White"
+                                  Foreground="#333333"
+                                  SelectionChanged="SourceGroupCombo_SelectionChanged"
+                                  DropDownOpened="SourceGroupCombo_DropDownOpened"/>
+
+                        <!-- Parameter Name ComboBox -->
+                        <TextBlock Text="Parameter Name:" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                        
+                        <!-- Loading Status -->
+                        <TextBlock x:Name="SourceLoadingStatus" 
+                                   Text="{Binding LoadingStatus}"
+                                   FontSize="11" 
+                                   FontStyle="Italic"
+                                   Foreground="#FF6B00"
+                                   Margin="0,0,0,5"
+                                   Visibility="Collapsed"/>
+                        
+                        <ComboBox x:Name="SourceParameterCombo" 
+                                  IsEditable="True"
+                                  Height="36"
+                                  Background="White"
+                                  Foreground="#333333"
+                                  SelectionChanged="SourceParameterCombo_SelectionChanged"
+                                  DropDownOpened="SourceParameterCombo_DropDownOpened"/>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Target Group -->
+                <ui:Card Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="📥 Group Đích (Target)" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Foreground="#D32F2F"
+                                   Margin="0,0,0,10"/>
+                        
+                        <!-- Group Name ComboBox -->
+                        <TextBlock Text="Group Name:" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="TargetGroupCombo" 
+                                  IsEditable="True"
+                                  Margin="0,0,0,10"
+                                  Height="36"
+                                  Background="White"
+                                  Foreground="#333333"
+                                  SelectionChanged="TargetGroupCombo_SelectionChanged"
+                                  DropDownOpened="TargetGroupCombo_DropDownOpened"/>
+
+                        <!-- Parameter Name ComboBox -->
+                        <TextBlock Text="Parameter Name:" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                        
+                        <!-- Loading Status -->
+                        <TextBlock x:Name="TargetLoadingStatus" 
+                                   Text="{Binding LoadingStatus}"
+                                   FontSize="11" 
+                                   FontStyle="Italic"
+                                   Foreground="#FF6B00"
+                                   Margin="0,0,0,5"
+                                   Visibility="Collapsed"/>
+                        
+                        <ComboBox x:Name="TargetParameterCombo" 
+                                  IsEditable="True"
+                                  Height="36"
+                                  Background="White"
+                                  Foreground="#333333"
+                                  SelectionChanged="TargetParameterCombo_SelectionChanged"
+                                  DropDownOpened="TargetParameterCombo_DropDownOpened"/>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Copy Options -->
+                <ui:Card Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="⚙️ Copy Options" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold"
+                                   Foreground="#333333"
+                                   Margin="0,0,0,10"/>
+                        
+                        <CheckBox x:Name="OverwriteExistingCheckBox"
+                                  Content="Overwrite existing values (ghi đè giá trị đã có)"
+                                  FontSize="12"
+                                  Foreground="#333333"
+                                  IsChecked="False"/>
+                        
+                        <TextBlock Text="✓ Unchecked: Only copy to empty/null parameters&#x0a;✓ Checked: Overwrite all parameters including existing values"
+                                   Foreground="#666666"
+                                   FontSize="11" 
+                                   Margin="25,5,0,0"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Buttons -->
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button x:Name="RunButton" 
+                            Content="Run Copy" 
+                            Grid.Column="0"
+                            Style="{StaticResource RunButtonStyle}"
+                            Height="44"
+                            FontSize="14"
+                            Click="RunButton_Click"
+                            Cursor="Hand"/>
+                            
+                    <Button x:Name="CloseButton" 
+                            Content="Close" 
+                            Grid.Column="2"
+                            Style="{StaticResource CloseButtonStyle}"
+                            Height="44"
+                            FontSize="14"
+                            Click="CloseButton_Click"
+                            Cursor="Hand"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

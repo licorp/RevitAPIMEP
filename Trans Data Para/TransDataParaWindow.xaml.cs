@@ -19,6 +19,13 @@ namespace Quoc_MEP
         private bool _targetParameterNamesLoaded = false;
         public bool IsProcessing { get; private set; } = false;
 
+        // GLOBAL SELECTION - Lưu tất cả categories đã tick (không phụ thuộc filter)
+        private HashSet<string> _globalSelectedCategories = new HashSet<string>();
+        private bool _isRestoringSelection = false;  // Flag để tránh trigger SelectionChanged khi restore
+
+        // CACHE - Tối ưu performance
+        private Dictionary<string, BuiltInParameterGroup> _groupNameCache = new Dictionary<string, BuiltInParameterGroup>();
+
         // Event to notify when user wants to proceed with copy
         public event EventHandler<CopyParametersRequestEventArgs> CopyRequested;
 
@@ -91,11 +98,24 @@ namespace Quoc_MEP
         // Search Categories
         private void CategorySearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            _isRestoringSelection = true;  // BẬT FLAG - tắt SelectionChanged
+            
             string searchText = CategorySearchBox.Text;
             var filtered = _viewModel.FilterItems(_viewModel.CategoryNames, searchText);
             CategoryListBox.ItemsSource = filtered;
             
-            // KHÔNG tự động chọn - để user tự chọn categories cần thiết
+            // RESTORE selection từ _globalSelectedCategories (không mất dù filter)
+            CategoryListBox.SelectedItems.Clear();
+            foreach (string category in _globalSelectedCategories)
+            {
+                // Chỉ select lại nếu category còn trong danh sách filtered
+                if (filtered.Contains(category))
+                {
+                    CategoryListBox.SelectedItems.Add(category);
+                }
+            }
+            
+            _isRestoringSelection = false;  // TẮT FLAG - bật lại SelectionChanged
         }
 
         // Hide Unselected Categories Checkbox
@@ -144,6 +164,24 @@ namespace Quoc_MEP
         // Khi user chọn categories, cập nhật ViewModel
         private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            // BỎ QUA nếu đang restore selection (tránh xóa _globalSelectedCategories)
+            if (_isRestoringSelection)
+                return;
+            
+            // CẬP NHẬT _globalSelectedCategories - lưu TẤT CẢ categories đã tick
+            // Thêm các items mới được chọn
+            foreach (string item in e.AddedItems)
+            {
+                _globalSelectedCategories.Add(item);
+            }
+            
+            // Xóa các items bị bỏ chọn
+            foreach (string item in e.RemovedItems)
+            {
+                _globalSelectedCategories.Remove(item);
+            }
+            
+            // Update ViewModel
             var selectedCategories = CategoryListBox.SelectedItems.Cast<string>().ToList();
             _viewModel.SelectedCategories = selectedCategories;
 
@@ -183,9 +221,15 @@ namespace Quoc_MEP
                 string selectedGroup = SourceGroupCombo.Text;
                 if (!string.IsNullOrWhiteSpace(selectedGroup))
                 {
+                    // Hiển thị loading status
+                    SourceLoadingStatus.Visibility = System.Windows.Visibility.Visible;
+                    
                     _viewModel.LoadParameterNamesByGroup(selectedGroup, "Source");
                     SourceParameterCombo.ItemsSource = _viewModel.SourceParameterNames;
                     _sourceParameterNamesLoaded = true;
+                    
+                    // Ẩn loading status sau khi load xong
+                    SourceLoadingStatus.Visibility = System.Windows.Visibility.Collapsed;
                 }
             }
         }
@@ -227,9 +271,15 @@ namespace Quoc_MEP
                 string selectedGroup = TargetGroupCombo.Text;
                 if (!string.IsNullOrWhiteSpace(selectedGroup))
                 {
+                    // Hiển thị loading status
+                    TargetLoadingStatus.Visibility = System.Windows.Visibility.Visible;
+                    
                     _viewModel.LoadParameterNamesByGroup(selectedGroup, "Target");
                     TargetParameterCombo.ItemsSource = _viewModel.TargetParameterNames;
                     _targetParameterNamesLoaded = true;
+                    
+                    // Ẩn loading status sau khi load xong
+                    TargetLoadingStatus.Visibility = System.Windows.Visibility.Collapsed;
                 }
             }
         }
@@ -451,11 +501,18 @@ namespace Quoc_MEP
         /// </summary>
         public Parameter GetParameterFromElementByGroup(Element elem, string paramName, string groupName)
         {
-            // Parse group name thành BuiltInParameterGroup
+            // CACHE: Parse group name thành BuiltInParameterGroup (chỉ parse 1 lần)
             BuiltInParameterGroup targetGroup = BuiltInParameterGroup.INVALID;
-            if (Enum.TryParse(groupName, out BuiltInParameterGroup parsedGroup))
+            if (!string.IsNullOrEmpty(groupName))
             {
-                targetGroup = parsedGroup;
+                if (!_groupNameCache.TryGetValue(groupName, out targetGroup))
+                {
+                    if (Enum.TryParse(groupName, out BuiltInParameterGroup parsedGroup))
+                    {
+                        targetGroup = parsedGroup;
+                        _groupNameCache[groupName] = targetGroup;
+                    }
+                }
             }
 
             // Tìm trong Instance parameters trước

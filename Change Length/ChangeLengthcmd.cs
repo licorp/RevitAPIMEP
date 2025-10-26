@@ -52,6 +52,75 @@ namespace Quoc_MEP
 
                 ChangeLengthLogger.Info($"UIApp: {uiApp != null}, UIDoc: {uidoc != null}, Doc: {doc != null}");
 
+                // ===== CHECK: Nếu gọi từ Panel =====
+                if (PanelDataBridge.IsCalledFromPanel && PanelDataBridge.ChangeLengthValue.HasValue)
+                {
+                    ChangeLengthLogger.Info($"Called from Panel with length: {PanelDataBridge.ChangeLengthValue.Value} mm");
+                    
+                    // Thực thi trực tiếp KHÔNG hiển thị form
+                    double lengthMm = PanelDataBridge.ChangeLengthValue.Value;
+                    var selectedIds = uidoc.Selection.GetElementIds();
+                    
+                    if (selectedIds.Count == 0)
+                    {
+                        TaskDialog.Show("Warning", "Please select pipe or duct elements!");
+                        PanelDataBridge.Reset();
+                        return Result.Cancelled;
+                    }
+                    
+                    // Thực thi change length
+                    double lengthFeet = lengthMm / 304.8;
+                    int successCount = 0;
+                    int skipCount = 0;
+                    
+                    using (Transaction trans = new Transaction(doc, "Change Length from Panel"))
+                    {
+                        trans.Start();
+                        
+                        foreach (ElementId id in selectedIds)
+                        {
+                            Element elem = doc.GetElement(id);
+                            
+                            if (elem is Autodesk.Revit.DB.Plumbing.Pipe pipe)
+                            {
+                                Parameter lengthParam = pipe.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH);
+                                if (lengthParam != null && !lengthParam.IsReadOnly)
+                                {
+                                    lengthParam.Set(lengthFeet);
+                                    successCount++;
+                                }
+                                else skipCount++;
+                            }
+                            else if (elem is Autodesk.Revit.DB.Mechanical.Duct duct)
+                            {
+                                Parameter lengthParam = duct.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH);
+                                if (lengthParam != null && !lengthParam.IsReadOnly)
+                                {
+                                    lengthParam.Set(lengthFeet);
+                                    successCount++;
+                                }
+                                else skipCount++;
+                            }
+                            else skipCount++;
+                        }
+                        
+                        trans.Commit();
+                    }
+                    
+                    ChangeLengthLogger.Info($"Panel execution: {successCount} success, {skipCount} skipped");
+                    
+                    string msg = $"Changed {successCount} element(s) to {lengthMm}mm";
+                    if (skipCount > 0) msg += $"\n{skipCount} skipped.";
+                    TaskDialog.Show("Success", msg);
+                    
+                    // Reset Bridge
+                    PanelDataBridge.Reset();
+                    
+                    ChangeLengthLogger.EndOperation("Execute");
+                    return Result.Succeeded;
+                }
+                
+                // ===== Gọi từ Ribbon: Hiển thị Form =====
                 // Khởi tạo window và event handler nếu chưa có (singleton pattern)
                 // Initialize window and event handler if not exists (singleton pattern)
                 if (_window == null)
@@ -90,6 +159,7 @@ namespace Quoc_MEP
             catch (Exception ex)
             {
                 message = ex.Message;
+                PanelDataBridge.Reset(); // Đảm bảo reset khi có lỗi
                 return Result.Failed;
             }
         }
@@ -200,6 +270,12 @@ namespace Quoc_MEP
         public UIDocument UIDoc { get; set; }
         public double LengthMm { get; set; }
         public PipeLengthWindow ParentWindow { get; set; }
+        
+        /// <summary>
+        /// Callback được gọi khi operation hoàn thành (success hoặc cancelled)
+        /// Parameters: (bool success, string message)
+        /// </summary>
+        public Action<bool, string> OnCompleted { get; set; }
 
         private const double MM_TO_FEET = 304.8;
 
@@ -385,6 +461,9 @@ namespace Quoc_MEP
 
                         trans.Commit();
                         ChangeLengthLogger.Info("Transaction committed successfully");
+                        
+                        // Notify success
+                        OnCompleted?.Invoke(true, $"✓ Changed length to {LengthMm}mm successfully!");
 
 
                     }
@@ -392,6 +471,7 @@ namespace Quoc_MEP
                     {
                         ChangeLengthLogger.Error("Error in transaction", ex);
                         trans.RollBack();
+                        OnCompleted?.Invoke(false, $"✗ Transaction failed: {ex.Message}");
                         throw;
                     }
                 }
@@ -399,6 +479,7 @@ namespace Quoc_MEP
             catch (Autodesk.Revit.Exceptions.OperationCanceledException)
             {
                 ChangeLengthLogger.Info("User cancelled pick operation");
+                OnCompleted?.Invoke(false, "⚠ Operation cancelled by user");
             }
             catch (Exception ex)
             {
@@ -406,6 +487,7 @@ namespace Quoc_MEP
                 MessageBox.Show(
                     $"Lỗi: {ex.Message}\nError: {ex.Message}",
                     "Lỗi / Error");
+                OnCompleted?.Invoke(false, $"✗ Error: {ex.Message}");
             }
             finally
             {
